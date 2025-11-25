@@ -1,7 +1,7 @@
 import "@wxn0brp/flanker-ui/html";
 import { createPanel, panel2Split } from "./createPanel";
 import "./mouse";
-import { updateSize } from "./update";
+import { updateSize } from "./utils";
 
 const app = qs("#app");
 
@@ -13,9 +13,9 @@ const panel2 = createPanel();
 panel2.innerHTML = "panel2";
 app.appendChild(panel2);
 
-updateSize(app, "50%");
+updateSize(app);
 
 const panel3 = createPanel();
 panel3.innerHTML = "panel3";
 
-updateSize(panel2Split(panel2, panel3, "column"), "50%");
+updateSize(panel2Split(panel2, panel3, "column"));

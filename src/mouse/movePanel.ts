@@ -1,5 +1,5 @@
 import { DRAG } from "../const";
-import { getRelativePosition } from "../update";
+import { detectDockZone, getRelativePosition, swapPanels, updateSize } from "../utils";
 
 let draggingPanel: HTMLDivElement = null;
 
@@ -42,6 +42,10 @@ document.addEventListener("mouseup", (e) => {
         return;
     }
 
+    function end() {
+        draggingPanel = null;
+    }
+
     /**
      * <div id="app" class="master split row">
      *      <div class="panel base" style="width: 50%;">panel1</div>     targetPanel
@@ -55,8 +59,16 @@ document.addEventListener("mouseup", (e) => {
      */
 
     targetPanel.parentElement.dataset.id = "ny-id";
+    const zone = detectDockZone(e, targetPanel);
+
+    if (zone === "center") {
+        end();
+        return;
+    }
 
     const siblingPanel = [...draggingPanel.parentElement!.children].find(el => el !== draggingPanel) as HTMLDivElement;
+    siblingPanel.style.width = "";
+    siblingPanel.style.height = "";
     targetPanel.parentElement.replaceChild(draggingPanel.parentElement.parentElement, targetPanel);
 
     const nyID = qs("ny-id", 1);
@@ -77,18 +89,26 @@ document.addEventListener("mouseup", (e) => {
      *  </div>
      */
 
-    siblingPanel.style.width = "";
-    siblingPanel.style.height = "";
-    draggingPanel.style.width = "50%";
-    draggingPanel.style.height = "";
     targetPanel.style.width = "";
     targetPanel.style.height = "";
 
-    draggingPanel.parentElement.classList.remove("column");
-    draggingPanel.parentElement.classList.remove("row");
+    const newSplitContainer = draggingPanel.parentElement as HTMLDivElement;
+    if (!newSplitContainer) return end();
 
-    draggingPanel.parentElement.parentElement.style.width = "50%";
-    draggingPanel.parentElement.parentElement.style.height = "";
+    const columnType = zone === "left" || zone === "right";
+    newSplitContainer.classList.toggle("column", !columnType);
+    newSplitContainer.classList.toggle("row", columnType);
+    updateSize(draggingPanel.parentElement as HTMLDivElement);
 
-    draggingPanel = null;
+    if (zone === "right" || zone === "bottom")
+        swapPanels(newSplitContainer);
+
+    const newSplitPanel = newSplitContainer.parentElement as HTMLDivElement;
+
+    if (!newSplitPanel) return end();
+
+    newSplitPanel.style.width = "50%";
+    newSplitPanel.style.height = "";
+
+    end();
 });

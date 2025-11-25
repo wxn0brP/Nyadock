@@ -1,6 +1,6 @@
 import { clamp } from "@wxn0brp/flanker-ui/utils";
 import { DRAG, RESIZE_MIN } from "../const";
-import { getRelativePosition, updateSize } from "../update";
+import { getRelativePosition, updateSize } from "../utils";
 
 let draggingPanel: HTMLDivElement = null;
 let leftPanel: HTMLDivElement = null;
