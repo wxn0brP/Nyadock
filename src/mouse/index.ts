@@ -1,5 +1,2 @@
-import { movePanel } from "./movePanel";
-import { resize } from "./resize";
-
-resize();
-movePanel();
+import "./movePanel";
+import "./resize";
