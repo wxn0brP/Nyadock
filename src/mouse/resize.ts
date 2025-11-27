@@ -1,6 +1,7 @@
 import { clamp } from "@wxn0brp/flanker-ui/utils";
 import { DRAG, RESIZE_MIN } from "../const";
 import { getRelativePosition, updateSize } from "../utils";
+import logger from "../logger";
 
 let draggingPanel: HTMLDivElement = null;
 let leftPanel: HTMLDivElement = null;
@@ -25,6 +26,7 @@ document.addEventListener("mousedown", (e) => {
     draggingPanel = target;
     leftPanel = _leftPanel;
     panelType = _panelType;
+    logger.debug(`Resizing panel ${panelType}`);
 
     document.body.style.cursor = panelType === "width" ? "col-resize" : "row-resize";
 });
@@ -39,10 +41,13 @@ document.addEventListener("mousemove", (e) => {
     else
         value = clamp(RESIZE_MIN, data.y, draggingPanel.parentElement.offsetHeight - RESIZE_MIN);
 
+    logger.debug(`Resizing to ${value}`);
     updateSize(draggingPanel.parentElement as HTMLDivElement, value);
 });
 
 document.addEventListener("mouseup", (e) => {
+    if (draggingPanel)
+        logger.debug("Resizing finished");
     draggingPanel = null;
     document.body.style.cursor = "";
 });

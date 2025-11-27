@@ -1,4 +1,7 @@
+import logger from "./logger";
+
 export function updateSize(split: HTMLElement, size: number | string = "50%") {
+    logger.debug(`Updating size of split to ${size}`);
     const staticPanel = split.children[0] as HTMLDivElement;
     updateStaticPanelSize(staticPanel, size);
 
@@ -8,6 +11,7 @@ export function updateSize(split: HTMLElement, size: number | string = "50%") {
 }
 
 export function updateStaticPanelSize(panel: HTMLElement, size: number | string = "50%") {
+    logger.debug(`Updating static panel size to ${size}`);
     const split = panel.parentElement as HTMLDivElement;
     const data = typeof size === "number" ? `${size}px` : size;
 
@@ -44,6 +48,7 @@ export function detectDockZone(e: MouseEvent, panel: HTMLElement, threshold = 0.
 }
 
 export function swapPanels(split: HTMLElement) {
+    logger.debug("Swapping panels");
     const staticPanel = split.children[0] as HTMLDivElement;
     const staticPanelWidth = staticPanel.style.width;
     const staticPanelHeight = staticPanel.style.height;

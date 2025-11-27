@@ -2,6 +2,10 @@ import "@wxn0brp/flanker-ui/html";
 import { createPanel, panel2Split } from "./createPanel";
 import "./mouse";
 import { updateSize } from "./utils";
+import logger from "./logger";
+
+logger.setLogLevel("DEBUG");
+(window as any).logger = logger;
 
 const app = qs("#app");
 
