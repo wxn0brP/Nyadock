@@ -18,7 +18,6 @@ panel1.innerHTML = `
         </ul>
     </div>
 `;
-app.appendChild(panel1);
 
 const panel2 = createPanel();
 panel2.innerHTML = `
@@ -32,9 +31,6 @@ panel2.innerHTML = `
         </div>
     </div>
 `;
-app.appendChild(panel2);
-
-updateSize(app);
 
 const panel3 = createPanel();
 panel3.innerHTML = `
@@ -48,4 +44,49 @@ panel3.innerHTML = `
     </div>
 `;
 
+const panel4 = createPanel();
+panel4.innerHTML = `
+    <div class="panel-header">Panel 4</div>
+    <div class="panel-content">
+        <h3>Form Panel</h3>
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email"><br><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+`;
+
+const panel5 = createPanel();
+panel5.innerHTML = `
+    <div class="panel-header">Panel 5</div>
+    <div class="panel-content">
+        <h3>Table Panel</h3>
+        <table border="1">
+            <tr>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Age</th>
+            </tr>
+            <tr>
+                <td>Jill</td>
+                <td>Smith</td>
+                <td>50</td>
+            </tr>
+            <tr>
+                <td>Eve</td>
+                <td>Jackson</td>
+                <td>94</td>
+            </tr>
+        </table>
+    </div>
+`;
+
+app.appendChild(panel1);
+app.appendChild(panel2);
+updateSize(app);
 updateSize(panel2Split(panel2, panel3, "column"));
+updateSize(panel2Split(panel3, panel4, "row"));
+updateSize(panel2Split(panel4, panel5, "column"));
