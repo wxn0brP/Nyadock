@@ -38,10 +38,7 @@ document.addEventListener("mouseup", (e) => {
         draggingPanel = null;
     }
 
-    const master = draggingPanel.closest(".master") as HTMLDivElement;
-    const allPanels = [...master.querySelectorAll(".panel")].filter(
-        p => p !== draggingPanel
-    );
+    const allPanels = [...controller._panels.values()].filter(p => p !== draggingPanel);
     logger.debug("All panels", allPanels);
 
     const elemUnder = document.elementFromPoint(e.clientX, e.clientY);
@@ -70,11 +67,16 @@ document.addEventListener("mouseup", (e) => {
         return end();
     }
 
-    const sourceId = draggingPanel.dataset.nya_id;
+    let sourceId = draggingPanel.dataset.nya_id;
     const targetId = targetPanel.dataset.nya_id;
+
+    if (!sourceId)
+        sourceId = draggingPanel.qs(".panel")?.dataset.nya_id;
 
     if (!sourceId || !targetId) {
         logger.error("Panel ID not found");
+        logger.error("Source ID:", sourceId);
+        logger.error("Target ID:", targetId);
         return end();
     }
 
