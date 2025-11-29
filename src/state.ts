@@ -1,5 +1,7 @@
 import { render } from "./render";
-import { Direction, NyaSplit } from "./types";
+import { defaultState, loadState } from "./storage";
+import { Direction, NyaSplit, StructNode } from "./types";
+import { convertToSplits } from "./utils/convertSplit";
 import { movePanel } from "./utils/movePanel";
 
 export class NyaController {
@@ -7,16 +9,20 @@ export class NyaController {
     _panels = new Map<string, HTMLDivElement>();
     _splits = new Map<string, HTMLDivElement>();
     master: HTMLDivElement;
+    settings = {
+        key: "nya.dock",
+    };
+    _struct: NyaSplit;
 
-    loadState(state: NyaSplit) {
-        this._split = state;
+    setDefaultState(state: NyaSplit | StructNode) {
+        this._struct = Array.isArray(state) ? convertToSplits(state) : state;
     }
 
-    getDefaultState(): NyaSplit {
-        return {
-            nodes: [] as any,
-            type: "row",
-        }
+    init() {
+        if (!this.master) throw new Error("Master element not set");
+        if (!this._struct) throw new Error("Structure not set");
+
+        loadState(this);
     }
 
     registerPanel(id: string, panel: HTMLDivElement) {
@@ -25,17 +31,23 @@ export class NyaController {
         this._panels.set(id, panel);
     }
 
-    render() {
+    _render() {
         this._splits.clear();
         return render(this);
     }
 
-    setDefaultSize() {
-        this.master.querySelectorAll<HTMLDivElement>(".split").forEach(split => split.style.setProperty("--size", "50%"));
+    _setDefaultSize() {
+        this._splits.forEach((split) => {
+            split.style.setProperty("--size", "50%");
+        });
     }
 
     movePanel(sourceId: string, targetId: string, zone: Direction) {
         return movePanel(this, sourceId, targetId, zone);
+    }
+
+    reset() {
+        defaultState(this);
     }
 }
 

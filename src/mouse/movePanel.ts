@@ -2,11 +2,11 @@ import { DRAG } from "../const";
 import { controller } from "../state";
 import logger from "../logger";
 import { detectDockZone, getRelativePosition } from "../utils/detect";
+import { saveNyaState } from "../storage";
 
 let draggingPanel: HTMLDivElement = null;
 
 document.addEventListener("mousedown", (e) => {
-    logger.debug("mousedown event triggered");
     const target = e.target as HTMLDivElement;
     if (!target.classList.contains("panel")) {
         logger.debug("Mousedown event ignored: target is not a panel");
@@ -25,7 +25,6 @@ document.addEventListener("mousedown", (e) => {
 });
 
 document.addEventListener("mouseup", (e) => {
-    logger.debug("mouseup event triggered");
     if (!draggingPanel) {
         logger.debug("Mouseup event ignored: no panel is being dragged");
         return;
@@ -86,8 +85,9 @@ document.addEventListener("mouseup", (e) => {
     }
 
     controller.movePanel(sourceId, targetId, zone);
-    controller.render();
-    controller.setDefaultSize();
+    controller._render();
+    controller._setDefaultSize();
+    saveNyaState();
 
     end();
 });

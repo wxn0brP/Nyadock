@@ -2,10 +2,10 @@ import "@wxn0brp/flanker-ui/html";
 import logger from "./logger";
 import "./mouse";
 import { controller } from "./state";
-import { convertToSplits } from "./utils/convertSplit";
 
 logger.setLogLevel("DEBUG");
 (window as any).logger = logger;
+(window as any).controller = controller;
 
 const app = qs("#app");
 
@@ -20,6 +20,9 @@ panel1.innerHTML = `
             <li>Item 2</li>
             <li>Item 3</li>
         </ul>
+        <div class="button-group">
+            <button onclick="controller.reset()">Reset Config</button>
+        </div>
     </div>
 `;
 
@@ -89,8 +92,7 @@ panel5.innerHTML = `
 `;
 
 controller.master = app;
-
-const structure = [
+controller.setDefaultState([
     "panel1",
     [
         "panel2",
@@ -100,10 +102,7 @@ const structure = [
         ],
         1
     ]
-];
-
-const convertedState = convertToSplits(structure);
-controller.loadState(convertedState);
+]);
 
 controller.registerPanel("panel1", panel1);
 controller.registerPanel("panel2", panel2);
@@ -111,5 +110,4 @@ controller.registerPanel("panel3", panel3);
 controller.registerPanel("panel4", panel4);
 controller.registerPanel("panel5", panel5);
 
-controller.render();
-controller.setDefaultSize();
+controller.init();

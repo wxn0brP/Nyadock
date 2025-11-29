@@ -3,6 +3,7 @@ import { DRAG, RESIZE_MIN } from "../const";
 import logger from "../logger";
 import { controller } from "../state";
 import { getRelativePosition } from "../utils/detect";
+import { saveNyaState } from "../storage";
 
 let draggingPanel: HTMLDivElement = null;
 let leftPanel: HTMLDivElement = null;
@@ -53,4 +54,5 @@ document.addEventListener("mouseup", (e) => {
         logger.debug("Resizing finished");
     draggingPanel = null;
     document.body.style.cursor = "";
+    saveNyaState();
 });

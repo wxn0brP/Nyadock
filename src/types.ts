@@ -7,3 +7,5 @@ export interface NyaSplit {
     nodes: [NyaNode | NyaSplit, NyaNode | NyaSplit];
     type: SplitType;
 }
+
+export type StructNode = [string | StructNode, string | StructNode, 1?];
