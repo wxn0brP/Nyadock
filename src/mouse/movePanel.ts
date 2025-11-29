@@ -70,7 +70,7 @@ document.addEventListener("mouseup", (e) => {
     const targetId = targetPanel.dataset.nya_id;
 
     if (!sourceId)
-        sourceId = draggingPanel.qs(".panel")?.dataset.nya_id;
+        sourceId = draggingPanel.qs(".panel[data-nya_id]")?.dataset.nya_id;
 
     if (!sourceId || !targetId) {
         logger.error("Panel ID not found");
