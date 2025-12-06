@@ -1,4 +1,4 @@
-# Nyadock
+# NyaDock
 
 A dock panel component library. Currently in early development stage.
 
@@ -14,12 +14,12 @@ A dock panel component library. Currently in early development stage.
 
 ## Demo
 
-[https://wxn0brp.github.io/Nyadock/demo](https://wxn0brp.github.io/Nyadock/demo)
+[https://wxn0brp.github.io/NyaDock/demo](https://wxn0brp.github.io/NyaDock/demo)
 
 ## Installation
 
 ```bash
-yarn add github:wxn0brP/Nyadock#dist
+npm i @wxn0brp/nya-dock
 ```
 
 ## Usage
