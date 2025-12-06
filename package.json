@@ -6,9 +6,9 @@
 	"description": "",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/wxn0brP/Nyadock.git"
+		"url": "https://github.com/wxn0brP/NyaDock.git"
 	},
-	"homepage": "https://github.com/wxn0brP/Nyadock",
+	"homepage": "https://github.com/wxn0brP/NyaDock",
 	"author": "wxn0brP",
 	"license": "MIT",
 	"type": "module",
