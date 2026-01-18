@@ -1,8 +1,20 @@
 import { DRAG } from "../const";
-import { controller } from "../state";
 import logger from "../logger";
-import { detectDockZone, getRelativePosition } from "../utils/detect";
+import { controller } from "../state";
 import { saveNyaState } from "../storage";
+import { Direction } from "../types";
+import { detectDockZone, getRelativePosition } from "../utils/detect";
+
+function removePreviewClass(zone: Direction) {
+    document.querySelectorAll(`.dock-${zone}`).forEach(dock => dock.classList.remove("dock-" + zone));
+}
+
+function removePreviewClasses() {
+    removePreviewClass("left");
+    removePreviewClass("right");
+    removePreviewClass("top");
+    removePreviewClass("bottom");
+}
 
 let draggingPanel: HTMLDivElement = null;
 
@@ -24,46 +36,39 @@ document.addEventListener("mousedown", (e) => {
     document.body.style.cursor = "move";
 });
 
-document.addEventListener("mouseup", (e) => {
+function locatePanel(e: MouseEvent, log = false) {
     if (!draggingPanel) {
-        logger.debug("Mouseup event ignored: no panel is being dragged");
+        if (log) logger.debug("Mouse event ignored: no panel is being dragged");
         return;
     }
 
-    document.body.style.cursor = "";
-
-    function end() {
-        logger.info("Dragging finished");
-        draggingPanel = null;
-    }
-
     const allPanels = [...controller._panels.values()].filter(p => p !== draggingPanel);
-    logger.debug("All panels", allPanels);
+    if (log) logger.debug("All panels", allPanels);
 
     const elemUnder = document.elementFromPoint(e.clientX, e.clientY);
 
     if (!elemUnder) {
-        logger.debug("Mouseup event ignored: no element under cursor");
-        return end();
+        if (log) logger.debug("Mouse event ignored: no element under cursor");
+        return null;
     }
 
     const targetPanel = (elemUnder as HTMLElement).closest(".panel") as HTMLDivElement | null;
     if (!targetPanel) {
-        logger.debug("Mouseup event ignored: no target panel under cursor");
-        return end();
+        if (log) logger.debug("Mouse event ignored: no target panel under cursor");
+        return null;
     }
-    logger.debug("Target panel", targetPanel);
+    if (log) logger.debug("Target panel", targetPanel);
 
     if (!allPanels.includes(targetPanel)) {
-        logger.debug("Mouseup event ignored: target panel is not a valid drop target");
-        return end();
+        if (log) logger.debug("Mouse event ignored: target panel is not a valid drop target");
+        return null;
     }
 
     const zone = detectDockZone(e, targetPanel);
-    logger.info(`Docking to ${zone}`);
+    if (log) logger.info(`Docking to ${zone}`);
     if (zone === "center") {
-        logger.debug("Docking to center, no action taken");
-        return end();
+        if (log) logger.debug("Docking to center, no action taken");
+        return null;
     }
 
     let sourceId = draggingPanel.dataset.nya_id;
@@ -73,21 +78,50 @@ document.addEventListener("mouseup", (e) => {
         sourceId = draggingPanel.qs(".panel[data-nya_id]")?.dataset.nya_id;
 
     if (!sourceId || !targetId) {
-        logger.error("Panel ID not found");
-        logger.error("Source ID:", sourceId);
-        logger.error("Target ID:", targetId);
-        return end();
+        if (log) logger.error("Panel ID not found");
+        if (log) logger.error("Source ID:", sourceId);
+        if (log) logger.error("Target ID:", targetId);
+        return null;
     }
 
     if (sourceId === targetId) {
-        logger.debug("Mouseup event ignored: source and target are the same");
-        return end();
+        if (log) logger.debug("Mouse event ignored: source and target are the same");
+        return null;
     }
+
+    return { sourceId, targetId, zone, targetPanel, draggingPanel };
+}
+
+document.addEventListener("mouseup", (e) => {
+    function end() {
+        logger.info("Dragging finished");
+        draggingPanel = null;
+    }
+
+    const result = locatePanel(e, true);
+    document.body.style.cursor = "";
+    if (!result) {
+        end();
+        return;
+    }
+    const { sourceId, targetId, zone } = result;
 
     controller.movePanel(sourceId, targetId, zone);
     controller._render();
     controller._setDefaultSize();
     saveNyaState();
+    removePreviewClasses();
 
     end();
+});
+
+document.addEventListener("mousemove", (e) => {
+    const result = locatePanel(e);
+    if (!result) return;
+
+    const { zone, targetPanel } = result;
+
+    removePreviewClasses();
+
+    targetPanel.querySelector(".panel-content").classList.add(`dock-${zone}`);
 });
